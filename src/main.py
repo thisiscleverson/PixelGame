@@ -6,8 +6,9 @@ from random import randrange
 FPS       = 60
 WIDTH     = 750
 HEIGHT    = 550
-PIXELSIZE = 5 # width and height of pixel
-FRUITSIZE = 5 # width and height of fruit
+PIXELSIZE = 25 # width and height of pixel
+FRUITSIZE = 25 # width and height of fruit]
+MOVESPEED = 5
 
 colors = Colors()
 
@@ -18,81 +19,73 @@ class PixelGame:
       self.DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
       self.__fpsClock = pygame.time.Clock()
 
-      self.playerx = 0
-      self.playery = 0
-      self.fluitx  = 0
-      self.fluity  = 0
 
-      self.createGame() # Add a player in a random place
+      self.playerX = 0
+      self.playerY = 0
+
+      self.fruitX  = 0
+      self.fruitY  = 0
+
+      self.createGame() # Add a player and fruit in a random place
    
-   #TODO: adicionar o "__addPlay" aqui. E adicionar a geração randômica da fruta aqui também!
    def createGame(self) -> None:
       self.__addPlayer()
-      self.__addFruit()
+      #self.__addFruit()
 
    def __addPlayer(self) -> None:
-      x_position = randrange(5, WIDTH  / 2)
-      y_position = randrange(5, HEIGHT / 2)
+      self.playerX = randrange(5, WIDTH  / 2)
+      self.playerY = randrange(5, HEIGHT / 2)
+      self.__player(x=self.playerX, y=self.playerY)
 
-      self.playerx = x_position
-      self.playery = y_position
-
-      print(f'({self.playerx},{self.playery})') # show initial position
-
-      self.__player(x_position,y_position) # create 
-
-
-   def __addFruit(self) -> None:
-      x_position = randrange(5, WIDTH  - (PIXELSIZE ** 2))
-      y_position = randrange(5, HEIGHT - (PIXELSIZE ** 2))
-
-      self.fluitx = x_position
-      self.fluity = y_position
-
-      print(f'({self.fluitx},{self.fluity})') # show initial position
-
-      self.__fluit(40,40) # create 
-
-   def __player(self, x_position, y_position) -> None:
-      pygame.draw.rect(self.DISPLAYSURF, colors.GREEN ,(x_position,y_position, 25, 25))   
-
-   def __fluit(self, x_position, y_position) -> None:
-      pygame.draw.rect(self.DISPLAYSURF, colors.RED ,(x_position,y_position, 25, 25))
-
-
-   def __moveUp(self, move_y):
-      if self.playery - move_y >= 0:
-         self.playery -= move_y
-
-   def __moveDown(self, move_y):
-      if self.playery + move_y < (HEIGHT - PIXELSIZE **2):     
-         self.playery += move_y
-
-   def __moveRight(self, move_x):
-      if self.playerx + move_x < (WIDTH - PIXELSIZE**2):
-         self.playerx += move_x 
-
-   def __moveLeft(self, move_x):
-      if self.playerx - move_x >= 0:
-         self.playerx -= move_x
-
-
-   def __movePlayer(self, event):
-      if event.type == pygame.KEYDOWN:
-         #print(f'({self.playerx},{self.playery})')
-         if event.key == pygame.K_LEFT:
-            self.__moveLeft(5)
-         if event.key == pygame.K_RIGHT:
-            self.__moveRight(5)
-         if event.key == pygame.K_UP:
-            self.__moveUp(5)
-         if event.key == pygame.K_DOWN:
-            self.__moveDown(5)
+   def __player(self,x, y) -> None:
+      self.player = Rect(x, y, PIXELSIZE, PIXELSIZE) 
+      pygame.draw.rect(self.DISPLAYSURF, colors.GREEN, self.player)   
 
    
+   def __addFruit(self) -> None:
+      self.fruitX = randrange(5, WIDTH  - FRUITSIZE)
+      self.fruitY = randrange(5, HEIGHT - FRUITSIZE)
+      self.__player(x=self.fruitX, y=self.fruitY)
+
+   def __fruit(self,x, y) -> None:
+      self.fruit = Rect(x, y, PIXELSIZE, PIXELSIZE) 
+      pygame.draw.rect(self.DISPLAYSURF, colors.RED, self.fruit)
+
+
+
+   def __moveUp(self, moveValue):
+      if self.playerY - moveValue > 0:
+         self.playerY -= moveValue
+
+   def __moveDown(self, moveValue):
+      if self.playerY + moveValue < (HEIGHT - PIXELSIZE):
+         self.playerY += moveValue
+   
+   def __moveRight(self, moveValues):
+      if self.playerX + moveValues  < (WIDTH - PIXELSIZE):
+         self.playerX += moveValues
+   
+   def __moveLeft(self, moveValues):
+      if self.playerX - moveValues > 0:
+         self.playerX -= moveValues
+
+
+   def __movePlayer(self,event):
+      keyPressed = pygame.key.get_pressed() # Listener keys of keyboard
+
+      if keyPressed[pygame.K_LEFT]:
+         self.__moveLeft(MOVESPEED)
+      if keyPressed[pygame.K_RIGHT]:
+         self.__moveRight(MOVESPEED)
+      if keyPressed[pygame.K_UP]:
+         self.__moveUp(MOVESPEED)
+      if keyPressed[pygame.K_DOWN]:
+         self.__moveDown(MOVESPEED)
+
    def __checkForFruitCollision(self):
-      #print(f'P: ({self.playerx},{self.playery}) F:({self.fluitx},{self.fluity})')
-      pass
+      if pygame.Rect.colliderect(self.player, self.fruit):
+         self.__addFruit()
+   
 
    def run(self):
       while True:
@@ -103,10 +96,11 @@ class PixelGame:
                pygame.quit()
                sys.exit()
 
-            
          self.__movePlayer(event)
-         self.__fluit(self.fluitx, self.fluity)
-         self.__player(self.playerx, self.playery)
+
+         self.__player(x=self.playerX, y=self.playerY)
+         self.__fruit(x=self.fruitX, y=self.fruitY)
+
          self.__checkForFruitCollision()
 
          pygame.display.update()
