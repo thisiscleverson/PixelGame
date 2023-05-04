@@ -118,6 +118,16 @@ class PixelGame:
       self.DISPLAYSURF.blit(textRender, textRectObj)
 
 
+   def showGameOver(self):
+      self.DISPLAYSURF.fill(colors.BLACK)
+      textRender = self.font.render("Gamer Over!",True, colors.RED) # text | antialias | color
+
+      textRectObj = textRender.get_rect()
+      textRectObj.center = ((WIDTH / 2), HEIGHT / 2) # set position 
+
+      self.DISPLAYSURF.blit(textRender, textRectObj)
+
+
    def run(self):
       while True:
          self.DISPLAYSURF.fill(colors.BLACK) # set background on window
@@ -134,14 +144,11 @@ class PixelGame:
 
          self.checkForFruitCollision()
          
-         #refatorar o time
-         time = self.timer(1)
 
-         if time == 0:
-            print('Game Over!')
-            break
-
-         self.showPointAndTime()
+         if self.timer(1) == 0:
+            self.showGameOver()
+         else: 
+            self.showPointAndTime()
 
          pygame.display.update()
          self.__fpsClock.tick(FPS)
