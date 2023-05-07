@@ -50,7 +50,7 @@ class PixelGame:
    
    def addFruit(self):
       fruitX = randrange(5, WINDOWSIZE[0] - REACTSIZE)
-      fruitY = randrange(5, WINDOWSIZE[1] - REACTSIZE)
+      fruitY = randrange(30, WINDOWSIZE[1] - REACTSIZE)
       self.fruitPosition = (fruitX, fruitY)
 
    def movePlayer(self):
@@ -76,18 +76,22 @@ class PixelGame:
 
       #############################################
       #TODO: refatorar
-      keyPressed = pygame.key.get_pressed() 
-      
-      if keyPressed[pygame.K_LEFT]:
-         moveLeft(MOVESPEED)
-      if keyPressed[pygame.K_RIGHT]:
-         moveRight(MOVESPEED)
-      if keyPressed[pygame.K_UP]:
-         moveUp(MOVESPEED)
-      if keyPressed[pygame.K_DOWN]:
-         moveDown(MOVESPEED)
+   
 
-      self.checkForFruitCollision()
+      keyPressed = pygame.key.get_pressed()
+
+      if any([keyPressed[key] for key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]]):
+
+         if keyPressed[pygame.K_LEFT]:
+            moveLeft(MOVESPEED)
+         if keyPressed[pygame.K_RIGHT]:
+            moveRight(MOVESPEED)
+         if keyPressed[pygame.K_UP]:
+            moveUp(MOVESPEED)
+         if keyPressed[pygame.K_DOWN]:
+            moveDown(MOVESPEED)
+
+         self.checkForFruitCollision()
 
 
    def checkForFruitCollision(self):
@@ -150,6 +154,7 @@ class PixelGame:
                pygame.quit()
                sys.exit()
 
+
          Time = self.timer(Time)
          if Time != 0:
             self.movePlayer()
@@ -158,6 +163,7 @@ class PixelGame:
          else:
             self.gameOverMessage()
          
+
          pygame.display.update()
          FPSCLOCK.tick(FPS)
 
