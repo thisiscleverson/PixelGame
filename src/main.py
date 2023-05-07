@@ -32,6 +32,9 @@ class PixelGame:
       self.player = Rect(self.playerPosition[0], self.playerPosition[1], REACTSIZE, REACTSIZE)
       self.fruit  = Rect(self.fruitPosition[0],  self.fruitPosition[1],  REACTSIZE, REACTSIZE)
 
+      #sound gameover
+      self.game_over = False
+
       #timer config
       self.cache_millis = self.millis()
 
@@ -45,7 +48,7 @@ class PixelGame:
 
    def addPlayer(self):
       playerX = randrange(5, WINDOWSIZE[0]  / 2)
-      playerY = randrange(5, WINDOWSIZE[1] / 2)
+      playerY = randrange(30, WINDOWSIZE[1] / 2)
       self.playerPosition = (playerX, playerY)
    
    def addFruit(self):
@@ -100,6 +103,7 @@ class PixelGame:
          Point += 1
          Time  += 2
          self.addFruit()
+         self.playSound('./assets/sounds/eatfruit.mp3')
          self.cache_millis = self.millis()
 
 
@@ -120,6 +124,10 @@ class PixelGame:
       textRectObj.center = ((WINDOWSIZE[0] / 2), (WINDOWSIZE[1] / 2)) # set position 
 
       DISPLAY.blit(textRender, textRectObj)
+      #play sound gameover
+      if not self.game_over:
+         self.playSound('./assets/sounds/gameover.mp3')
+         self.game_over = True
 
 
    def millis(self):
@@ -132,6 +140,10 @@ class PixelGame:
             self.cache_millis = self.millis()
       return time
       
+
+   def playSound(self, path):
+      soundObj = pygame.mixer.Sound(path)
+      soundObj.play()
 
 
    def render(self):
