@@ -11,6 +11,7 @@ WINDOWSIZE = (750,550) # (width, height)
 REACTSIZE  = 25
 MOVESPEED  = 5
 ADD_TIME   = 2
+ADD_POINT  = 1
 
 
 pygame.init()
@@ -78,11 +79,9 @@ class PixelGame:
             self.playerPosition  = (positionX, positionY)
 
       #############################################
-      #TODO: refatorar
-   
-
       keyPressed = pygame.key.get_pressed()
 
+      # verificar se as tecla de movimento foram pressionadas
       if any([keyPressed[key] for key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN]]):
 
          if keyPressed[pygame.K_LEFT]:
@@ -100,8 +99,8 @@ class PixelGame:
    def checkForFruitCollision(self):
       global Point, Time
       if pygame.Rect.colliderect(self.player, self.fruit):
-         Point += 1
-         Time  += 2
+         Point += ADD_POINT
+         Time  += ADD_TIME
          self.addFruit()
          self.playSound('./assets/sounds/eatfruit.mp3')
          self.cache_millis = self.millis()
@@ -166,7 +165,6 @@ class PixelGame:
                pygame.quit()
                sys.exit()
 
-
          Time = self.timer(Time)
          if Time != 0:
             self.movePlayer()
@@ -175,7 +173,6 @@ class PixelGame:
          else:
             self.gameOverMessage()
          
-
          pygame.display.update()
          FPSCLOCK.tick(FPS)
 
